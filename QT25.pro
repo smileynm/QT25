@@ -15,6 +15,10 @@ SOURCES += \
     controller/logincontroller.cpp \
     controller/normalcontroller.cpp \
     model/database.cpp \
+    model/member.cpp \
+    model/membermanager.cpp \
+    model/product.cpp \
+    model/productmanager.cpp \
     view/admin.cpp \
     model/main.cpp \
     view/adminchatform.cpp \
@@ -31,6 +35,10 @@ HEADERS += \
     controller/logincontroller.h \
     controller/normalcontroller.h \
     model/database.h \
+    model/member.h \
+    model/membermanager.h \
+    model/product.h \
+    model/productmanager.h \
     view/admin.h \
     view/adminchatform.h \
     view/admininfoform.h \

@@ -35,9 +35,12 @@ NormalOrderForm::NormalOrderForm(QWidget *parent)
     // 생필품 위젯
     ui->neceWidget->setColumnCount(headers.size());
     ui->neceWidget->setHorizontalHeaderLabels(headers);
+
     // 사용자 장바구니 위젯
-    ui->orderWidget->setColumnCount(headers.size());
-    ui->orderWidget->setHorizontalHeaderLabels(headers);
+    QStringList orderHeaders;
+    orderHeaders << "상품명" << "상품ID" << "가격" << "카테고리" << "개수";
+    ui->orderWidget->setColumnCount(orderHeaders.size());
+    ui->orderWidget->setHorizontalHeaderLabels(orderHeaders);
 
     // 상품 관리자 인스턴스 호출 및 상품 카탈로그 QMap 형태의 상품 리스트 호출
     ProductManager& productManager = ProductManager::getInstance();
@@ -62,7 +65,7 @@ NormalOrderForm::NormalOrderForm(QWidget *parent)
     ui->milkiceWidget->setColumnWidth(0, 250);
     ui->drinkWidget->setColumnWidth(0, 250);
     ui->neceWidget->setColumnWidth(0, 250);
-    ui->orderWidget->setColumnWidth(0, 250);
+    ui->orderWidget->setColumnWidth(0, 200);
 
     // 이터레이터 선언 및 각 카테고리별 행 변수 선언
     auto it = productCatalog.constBegin();
@@ -221,9 +224,12 @@ void NormalOrderForm::on_toolBox_currentChanged(int index) {
 
 void NormalOrderForm::onItemDoubleClicked(QTableWidgetItem *item) {
     int row = item->row();
+    int rowCount = ui->orderWidget->rowCount();
+    bool isItem = false;
     QTableWidgetItem *nameItem = new QTableWidgetItem();
     QTableWidgetItem *idItem = new QTableWidgetItem();
     QTableWidgetItem *priceItem = new QTableWidgetItem();
+    QTableWidgetItem *quantityItem = new QTableWidgetItem();
     QTableWidgetItem *categoryItem = new QTableWidgetItem();
 
     // 더블클릭 된 상품의 각 정보를 복사
@@ -232,19 +238,42 @@ void NormalOrderForm::onItemDoubleClicked(QTableWidgetItem *item) {
     priceItem->setText(item->tableWidget()->item(row, 2)->text());
     categoryItem->setText(item->tableWidget()->item(row, 3)->text());
 
+    for (int i=0; i<rowCount; i++) {
+        if (idItem->text() == ui->orderWidget->item(i, 1)->text()) {
+            isItem = true;
+            quantityItem = ui->orderWidget->item(i, 4);
+            QVariant data = quantityItem->data(Qt::EditRole);
+            if (data.canConvert<double>()) {
+                double value = data.toDouble();
+                value++;
+                quantityItem->setData(Qt::EditRole, value);
+            }
+        }
+    }
+
+    if (!isItem) {
+        double value = 1;
+        quantityItem->setData(Qt::EditRole, value);
+
+        // 장바구니의 행 개수 추가
+        increaseOrderCount();
+        ui->orderWidget->setRowCount(getOrderCount());
+        qDebug() << getOrderCount();
+
+        // 해당 행에 더블클릭되었던 상품 정보 입력
+        ui->orderWidget->setItem(getOrderCount()-1, 0, nameItem);
+        ui->orderWidget->setItem(getOrderCount()-1, 1, idItem);
+        ui->orderWidget->setItem(getOrderCount()-1, 2, priceItem);
+        ui->orderWidget->setItem(getOrderCount()-1, 3, categoryItem);
+        ui->orderWidget->setItem(getOrderCount()-1, 4, quantityItem);
+    }
+
     // 디버깅 메시지
-    qDebug() << nameItem->text() << idItem->text() << priceItem->text() << categoryItem->text();
+    qDebug() << nameItem->text() << idItem->text() << priceItem->text() << categoryItem->text() << quantityItem->text();
 
-    // 장바구니의 행 개수 추가
-    increaseOrderCount();
-    ui->orderWidget->setRowCount(getOrderCount());
-    qDebug() << getOrderCount();
 
-    // 해당 행에 더블클릭되었던 상품 정보 입력
-    ui->orderWidget->setItem(getOrderCount()-1, 0, nameItem);
-    ui->orderWidget->setItem(getOrderCount()-1, 1, idItem);
-    ui->orderWidget->setItem(getOrderCount()-1, 2, priceItem);
-    ui->orderWidget->setItem(getOrderCount()-1, 3, categoryItem);
+
+
 
     // json 저장
 }

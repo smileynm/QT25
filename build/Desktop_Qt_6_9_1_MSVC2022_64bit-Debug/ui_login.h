@@ -54,6 +54,7 @@ public:
         pwEdit = new QLineEdit(logInGroupBox);
         pwEdit->setObjectName("pwEdit");
         pwEdit->setGeometry(QRect(50, 44, 201, 28));
+        pwEdit->setInputMethodHints(Qt::InputMethodHint::ImhNone);
         signUpButton = new QPushButton(Login);
         signUpButton->setObjectName("signUpButton");
         signUpButton->setGeometry(QRect(181, 99, 88, 29));

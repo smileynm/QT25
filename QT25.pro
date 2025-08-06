@@ -17,6 +17,7 @@ SOURCES += \
     model/database.cpp \
     model/member.cpp \
     model/membermanager.cpp \
+    model/orderedproduct.cpp \
     model/product.cpp \
     model/productmanager.cpp \
     view/admin.cpp \
@@ -37,6 +38,7 @@ HEADERS += \
     model/database.h \
     model/member.h \
     model/membermanager.h \
+    model/orderedproduct.h \
     model/product.h \
     model/productmanager.h \
     view/admin.h \
